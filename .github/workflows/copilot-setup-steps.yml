@@ -33,6 +33,3 @@ jobs:
         with:
           node-version: "20"
           cache: "npm"
-
-      - name: Install JavaScript dependencies
-        run: npm ci
