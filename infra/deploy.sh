@@ -7,7 +7,7 @@ set -e
 
 # Variables
 RESOURCE_GROUP="new-app-copliot-demo"
-LOCATION="eastus"
+LOCATION="westus2"
 DEPLOYMENT_NAME="app-service-deployment-$(date +%Y%m%d-%H%M%S)"
 
 echo "🚀 Starting deployment of Azure App Service infrastructure..."

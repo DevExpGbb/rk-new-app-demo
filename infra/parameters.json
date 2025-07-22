@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "location": {
-      "value": "East US"
+      "value": "westus2"
     },
     "appServicePlanName": {
       "value": "asp-new-app-demo"
@@ -13,10 +13,10 @@
     },
     "sku": {
       "value": {
-        "name": "B1",
-        "tier": "Basic", 
-        "size": "B1",
-        "family": "B",
+        "name": "F1",
+        "tier": "Free", 
+        "size": "F1",
+        "family": "F",
         "capacity": 1
       }
     },

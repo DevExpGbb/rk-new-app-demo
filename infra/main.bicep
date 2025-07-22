@@ -9,10 +9,10 @@ param appServiceName string = 'app-new-app-demo'
 
 @description('SKU for the App Service Plan')
 param sku object = {
-  name: 'B1'
-  tier: 'Basic'
-  size: 'B1'
-  family: 'B'
+  name: 'F1'
+  tier: 'Free'
+  size: 'F1'
+  family: 'F'
   capacity: 1
 }
 
