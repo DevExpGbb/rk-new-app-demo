@@ -11,8 +11,8 @@ RUN addgroup -g 1001 -S nodejs && \
 # Copy package.json and package-lock.json for better Docker layer caching
 COPY package*.json ./
 
-# Install dependencies (production only)
-RUN npm ci --omit=dev && npm cache clean --force
+# Install dependencies
+RUN npm install && npm cache clean --force
 
 # Copy the application source code (excluding node_modules via .dockerignore)
 COPY . .
@@ -21,16 +21,16 @@ COPY . .
 RUN chown -R nodeuser:nodejs /app
 USER nodeuser
 
-# Expose the port the app runs on (matching Azure App Service configuration)
-EXPOSE 8080
+# Expose the port the app runs on (matching application default)
+EXPOSE 3000
 
 # Set environment variables
 ENV NODE_ENV=production
-ENV PORT=8080
+ENV PORT=3000
 
 # Health check to verify the application is running
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "const http = require('http'); const options = { hostname: 'localhost', port: process.env.PORT || 8080, path: '/health', timeout: 2000 }; const req = http.request(options, (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.end();"
+  CMD node -e "const http = require('http'); const options = { hostname: 'localhost', port: process.env.PORT || 3000, path: '/health', timeout: 2000 }; const req = http.request(options, (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.end();"
 
 # Start the application
 CMD ["npm", "start"]

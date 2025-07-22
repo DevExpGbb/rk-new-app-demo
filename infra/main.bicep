@@ -61,7 +61,7 @@ resource appService 'Microsoft.Web/sites@2023-01-01' = {
         }
         {
           name: 'PORT'
-          value: '8080'
+          value: '3000'
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_URL'
