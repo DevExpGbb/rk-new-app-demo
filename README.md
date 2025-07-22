@@ -147,9 +147,12 @@ The test suite includes:
 ├── infra/                  # Azure infrastructure as code
 │   ├── main.bicep          # Main Bicep template
 │   ├── parameters.json     # Deployment parameters
-│   ├── deploy.sh           # Deployment script
+│   ├── deploy.sh           # Infrastructure deployment script
+│   ├── container-deploy.sh # Container build and deployment script
 │   └── README.md           # Infrastructure documentation
 ├── cli.js                  # Command-line interface
+├── Dockerfile              # Container definition
+├── .dockerignore           # Docker build exclusions
 ├── package.json
 └── README.md
 ```
@@ -179,20 +182,31 @@ The application provides contextual information including:
 
 ## Azure Deployment
 
-This application can be deployed to Azure App Service. The infrastructure is defined using Azure Bicep templates in the `infra/` directory.
+This application is containerized and can be deployed to Azure App Service using Azure Container Registry. The infrastructure is defined using Azure Bicep templates in the `infra/` directory.
 
 ### Prerequisites for Azure Deployment
 
 - Azure CLI installed and configured
+- Docker installed and running
 - Azure subscription with appropriate permissions
 - Resource group "new-app-copliot-demo" (will be created automatically)
 
-### Deploy Infrastructure
+### Deploy Infrastructure and Container
 
 ```bash
-# Deploy Azure App Service Plan and App Service
+# Step 1: Deploy Azure infrastructure (ACR, App Service Plan, App Service)
 ./infra/deploy.sh
+
+# Step 2: Build and deploy the container image
+./infra/container-deploy.sh
 ```
+
+### Container Features
+
+- **Base Image**: Node.js 20 Alpine Linux for minimal footprint
+- **Security**: Non-root user execution
+- **Health Monitoring**: Built-in health checks
+- **Production Ready**: Optimized for production deployment
 
 See `infra/README.md` for detailed deployment instructions and configuration options.
 

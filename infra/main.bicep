@@ -7,17 +7,32 @@ param appServicePlanName string = 'asp-new-app-demo'
 @description('Name of the App Service')
 param appServiceName string = 'app-new-app-demo'
 
+@description('Name of the Azure Container Registry')
+param containerRegistryName string = 'acrnewappdemo${uniqueString(resourceGroup().id)}'
+
 @description('SKU for the App Service Plan')
 param sku object = {
-  name: 'F1'
-  tier: 'Free'
-  size: 'F1'
-  family: 'F'
+  name: 'B1'
+  tier: 'Basic'
+  size: 'B1'
+  family: 'B'
   capacity: 1
 }
 
-@description('Runtime stack for the App Service')
-param linuxFxVersion string = 'NODE|20-lts'
+@description('Container image name and tag')
+param containerImage string = 'canada-day-calc:latest'
+
+// Azure Container Registry
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
+  name: containerRegistryName
+  location: location
+  sku: {
+    name: 'Basic'
+  }
+  properties: {
+    adminUserEnabled: true
+  }
+}
 
 // App Service Plan
 resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
@@ -37,8 +52,8 @@ resource appService 'Microsoft.Web/sites@2023-01-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: linuxFxVersion
-      appCommandLine: 'npm start'
+      linuxFxVersion: 'DOCKER|${containerRegistry.properties.loginServer}/${containerImage}'
+      appCommandLine: ''
       appSettings: [
         {
           name: 'NODE_ENV'
@@ -46,7 +61,19 @@ resource appService 'Microsoft.Web/sites@2023-01-01' = {
         }
         {
           name: 'PORT'
-          value: '8080'
+          value: '3000'
+        }
+        {
+          name: 'DOCKER_REGISTRY_SERVER_URL'
+          value: 'https://${containerRegistry.properties.loginServer}'
+        }
+        {
+          name: 'DOCKER_REGISTRY_SERVER_USERNAME'
+          value: containerRegistry.listCredentials().username
+        }
+        {
+          name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
+          value: containerRegistry.listCredentials().passwords[0].value
         }
       ]
     }
@@ -72,3 +99,12 @@ output appServiceDefaultHostname string = appService.properties.defaultHostName
 
 @description('App Service URL')
 output appServiceUrl string = 'https://${appService.properties.defaultHostName}'
+
+@description('Container Registry ID')
+output containerRegistryId string = containerRegistry.id
+
+@description('Container Registry name')
+output containerRegistryName string = containerRegistry.name
+
+@description('Container Registry login server')
+output containerRegistryLoginServer string = containerRegistry.properties.loginServer

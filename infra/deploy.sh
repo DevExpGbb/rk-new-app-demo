@@ -53,18 +53,33 @@ APP_SERVICE_PLAN_NAME=$(az deployment group show \
     --query "properties.outputs.appServicePlanName.value" \
     --output tsv)
 
+CONTAINER_REGISTRY_NAME=$(az deployment group show \
+    --resource-group "$RESOURCE_GROUP" \
+    --name "$DEPLOYMENT_NAME" \
+    --query "properties.outputs.containerRegistryName.value" \
+    --output tsv)
+
+CONTAINER_REGISTRY_LOGIN_SERVER=$(az deployment group show \
+    --resource-group "$RESOURCE_GROUP" \
+    --name "$DEPLOYMENT_NAME" \
+    --query "properties.outputs.containerRegistryLoginServer.value" \
+    --output tsv)
+
 echo ""
-echo "✅ Deployment completed successfully!"
+echo "✅ Infrastructure deployment completed successfully!"
 echo ""
 echo "📋 Summary:"
 echo "  Resource Group: $RESOURCE_GROUP"
 echo "  App Service Plan: $APP_SERVICE_PLAN_NAME"
 echo "  App Service: $APP_SERVICE_NAME"
 echo "  App Service URL: $APP_SERVICE_URL"
+echo "  Container Registry: $CONTAINER_REGISTRY_NAME"
+echo "  Container Registry Login Server: $CONTAINER_REGISTRY_LOGIN_SERVER"
 echo ""
-echo "🌐 Your Node.js app will be available at: $APP_SERVICE_URL"
+echo "🌐 Your containerized Node.js app infrastructure is ready!"
 echo ""
 echo "Next steps:"
-echo "1. Deploy your Node.js application to the App Service"
-echo "2. Configure any additional app settings as needed"
+echo "1. Build and deploy your container image:"
+echo "   ./infra/container-deploy.sh"
+echo "2. Test the deployed application at: $APP_SERVICE_URL"
 echo "3. Set up CI/CD pipeline for automatic deployments"
