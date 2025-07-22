@@ -57,6 +57,11 @@ The server will start on port 3000 by default. You can change this by setting th
 │   │   └── index.js
 │   └── routes/         # Route definitions
 │       └── index.js
+├── infra/              # Azure infrastructure as code
+│   ├── main.bicep      # Main Bicep template
+│   ├── parameters.json # Deployment parameters
+│   ├── deploy.sh       # Deployment script
+│   └── README.md       # Infrastructure documentation
 ├── package.json
 └── README.md
 ```
@@ -66,6 +71,25 @@ The server will start on port 3000 by default. You can change this by setting th
 - `PORT` - Server port (default: 3000)
 - `NODE_ENV` - Environment (development/production)
 - `CORS_ORIGIN` - CORS origin (default: *)
+
+## Azure Deployment
+
+This application can be deployed to Azure App Service. The infrastructure is defined using Azure Bicep templates in the `infra/` directory.
+
+### Prerequisites for Azure Deployment
+
+- Azure CLI installed and configured
+- Azure subscription with appropriate permissions
+- Resource group "new-app-copliot-demo" (will be created automatically)
+
+### Deploy Infrastructure
+
+```bash
+# Deploy Azure App Service Plan and App Service
+./infra/deploy.sh
+```
+
+See `infra/README.md` for detailed deployment instructions and configuration options.
 
 ## License
 
