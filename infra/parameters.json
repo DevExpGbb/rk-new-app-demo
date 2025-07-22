@@ -11,17 +11,20 @@
     "appServiceName": {
       "value": "app-new-app-demo"
     },
+    "containerRegistryName": {
+      "value": "acrnewappdemo"
+    },
     "sku": {
       "value": {
-        "name": "F1",
-        "tier": "Free", 
-        "size": "F1",
-        "family": "F",
+        "name": "B1",
+        "tier": "Basic", 
+        "size": "B1",
+        "family": "B",
         "capacity": 1
       }
     },
-    "linuxFxVersion": {
-      "value": "NODE|20-lts"
+    "containerImage": {
+      "value": "canada-day-calc:latest"
     }
   }
 }

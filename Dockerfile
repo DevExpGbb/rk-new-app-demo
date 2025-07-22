@@ -4,14 +4,22 @@ FROM node:20-alpine
 # Set the working directory inside the container
 WORKDIR /app
 
+# Create a non-root user to run the application
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodeuser -u 1001
+
 # Copy package.json and package-lock.json for better Docker layer caching
 COPY package*.json ./
 
-# Install dependencies (using npm install for better compatibility)
-RUN npm install --production && npm cache clean --force
+# Install dependencies (production only)
+RUN npm ci --omit=dev && npm cache clean --force
 
-# Copy the application source code
+# Copy the application source code (excluding node_modules via .dockerignore)
 COPY . .
+
+# Change ownership of the app directory to the nodeuser
+RUN chown -R nodeuser:nodejs /app
+USER nodeuser
 
 # Expose the port the app runs on (matching Azure App Service configuration)
 EXPOSE 8080
