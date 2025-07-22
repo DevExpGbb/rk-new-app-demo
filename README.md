@@ -91,6 +91,27 @@ This application can be deployed to Azure App Service. The infrastructure is def
 
 See `infra/README.md` for detailed deployment instructions and configuration options.
 
+### Azure App Service Status Monitoring
+
+This repository includes scripts to check the status of the deployed App Service using Azure MCP server tools:
+
+```bash
+# Check current App Service status
+npm run azure:status
+
+# View Azure MCP tools usage guide
+npm run azure:status-help
+```
+
+The status checker provides comprehensive information including:
+- Current application state and availability
+- Application URLs for testing
+- Runtime configuration details
+- Outbound IP addresses
+- Health check recommendations
+
+See `scripts/README.md` for detailed documentation on the Azure monitoring tools.
+
 ## License
 
 ISC
