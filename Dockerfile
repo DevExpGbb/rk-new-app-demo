@@ -1,0 +1,28 @@
+# Use the official Node.js 20 Alpine Linux image
+FROM node:20-alpine
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json for better Docker layer caching
+COPY package*.json ./
+
+# Install dependencies (using npm install for better compatibility)
+RUN npm install --production && npm cache clean --force
+
+# Copy the application source code
+COPY . .
+
+# Expose the port the app runs on (matching Azure App Service configuration)
+EXPOSE 8080
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=8080
+
+# Health check to verify the application is running
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "const http = require('http'); const options = { hostname: 'localhost', port: process.env.PORT || 8080, path: '/health', timeout: 2000 }; const req = http.request(options, (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.end();"
+
+# Start the application
+CMD ["npm", "start"]
