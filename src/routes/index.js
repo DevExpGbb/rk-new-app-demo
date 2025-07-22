@@ -1,9 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const canadaDayRoutes = require('./canada-day');
+const salesRoutes = require('./sales');
 
 // Mount Canada Day calculator routes
 router.use(canadaDayRoutes);
+
+// Mount Sales dashboard routes
+router.use(salesRoutes);
 
 // Example API routes
 router.get('/api/users', (req, res) => {

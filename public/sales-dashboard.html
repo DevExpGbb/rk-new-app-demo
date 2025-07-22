@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Initiative Tracking Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            opacity: 0.9;
+        }
+        
+        .nav {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .nav a {
+            text-decoration: none;
+            color: #667eea;
+            margin-right: 2rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav a:hover, .nav a.active {
+            color: #764ba2;
+            border-bottom: 2px solid #764ba2;
+            padding-bottom: 0.25rem;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .filters {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .filters h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .filter-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .filter-group select, .filter-group input {
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .filter-group select:focus, .filter-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .overview-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #333;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 0.5rem;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        
+        .metric-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .metric-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .metric-value.currency {
+            color: #28a745;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .chart-container h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            text-align: center;
+        }
+        
+        /* Simple bar chart styles */
+        .simple-chart {
+            margin: 1rem 0;
+        }
+        
+        .chart-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .bar-label {
+            min-width: 120px;
+            font-size: 0.9rem;
+            color: #555;
+            margin-right: 1rem;
+        }
+        
+        .bar-visual {
+            flex: 1;
+            height: 25px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            margin-right: 1rem;
+            position: relative;
+            min-width: 10px;
+        }
+        
+        .bar-value {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #333;
+            min-width: 80px;
+            text-align: right;
+        }
+        
+        .trend-chart {
+            display: flex;
+            align-items: end;
+            height: 200px;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin: 1rem 0;
+        }
+        
+        .trend-bar {
+            flex: 1;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            margin: 0 2px;
+            min-height: 10px;
+            border-radius: 2px 2px 0 0;
+            position: relative;
+        }
+        
+        .trend-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: #666;
+            white-space: nowrap;
+        }
+        
+        .pie-chart {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin: 1rem 0;
+        }
+        
+        .pie-visual {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #667eea 0deg,
+                #764ba2 72deg,
+                #f093fb 144deg,
+                #f5576c 216deg,
+                #4facfe 288deg,
+                #667eea 360deg
+            );
+        }
+        
+        .pie-legend {
+            flex: 1;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+            margin-right: 0.5rem;
+        }
+        
+        .legend-text {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+        
+        .legend-value {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .table-header {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .table-header h3 {
+            color: #333;
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: 500px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .amount {
+            font-weight: 600;
+            color: #28a745;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .status-prospecting { background: #fef3cd; color: #856404; }
+        .status-qualified { background: #d1ecf1; color: #0c5460; }
+        .status-proposal { background: #d4edda; color: #155724; }
+        .status-negotiation { background: #cce7ff; color: #004085; }
+        .status-closed-won { background: #d4edda; color: #155724; }
+        .status-closed-lost { background: #f8d7da; color: #721c24; }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .header {
+                padding: 1rem;
+            }
+            
+            .nav {
+                padding: 1rem;
+            }
+            
+            .nav a {
+                margin-right: 1rem;
+                margin-bottom: 0.5rem;
+                display: inline-block;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .overview-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .pie-chart {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .chart-container {
+                padding: 1rem;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Sales Initiative Tracking Dashboard</h1>
+        <p>Real-time insights into sales performance, trends, and opportunities</p>
+    </div>
+    
+    <div class="nav">
+        <a href="/sales-dashboard.html" class="active">Sales Dashboard</a>
+        <a href="/">Canada Day Calculator</a>
+    </div>
+    
+    <div class="container">
+        <!-- Filters Section -->
+        <div class="filters">
+            <h3>Filters</h3>
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label for="regionFilter">Region</label>
+                    <select id="regionFilter">
+                        <option value="">All Regions</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="productFilter">Product</label>
+                    <select id="productFilter">
+                        <option value="">All Products</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="salesRepFilter">Sales Rep</label>
+                    <select id="salesRepFilter">
+                        <option value="">All Sales Reps</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="stageFilter">Stage</label>
+                    <select id="stageFilter">
+                        <option value="">All Stages</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="startDate">Start Date</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="filter-group">
+                    <label for="endDate">End Date</label>
+                    <input type="date" id="endDate">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Overview Cards -->
+        <div class="overview-cards">
+            <div class="card">
+                <h3>Total Sales Overview</h3>
+                <div class="metric">
+                    <span class="metric-label">Current Month</span>
+                    <span class="metric-value currency" id="currentMonthAmount">Loading...</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Current Quarter</span>
+                    <span class="metric-value currency" id="currentQuarterAmount">Loading...</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Year to Date</span>
+                    <span class="metric-value currency" id="ytdAmount">Loading...</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Key Metrics</h3>
+                <div class="metric">
+                    <span class="metric-label">Total Opportunities</span>
+                    <span class="metric-value" id="totalOpportunities">Loading...</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Average Deal Size</span>
+                    <span class="metric-value currency" id="avgDealSize">Loading...</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Win Rate</span>
+                    <span class="metric-value" id="winRate">Loading...</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+            <!-- Sales Trends Chart -->
+            <div class="chart-container">
+                <h3>Sales Trends (Last 12 Months)</h3>
+                <div id="trendsChart" class="trend-chart"></div>
+            </div>
+            
+            <!-- Regional Performance Chart -->
+            <div class="chart-container">
+                <h3>Sales by Region</h3>
+                <div id="regionChart" class="simple-chart"></div>
+            </div>
+            
+            <!-- Product Performance Chart -->
+            <div class="chart-container">
+                <h3>Top Performing Products</h3>
+                <div id="productChart" class="pie-chart">
+                    <div class="pie-visual"></div>
+                    <div class="pie-legend"></div>
+                </div>
+            </div>
+            
+            <!-- Sales Funnel Chart -->
+            <div class="chart-container">
+                <h3>Sales Funnel</h3>
+                <div id="funnelChart" class="simple-chart"></div>
+            </div>
+        </div>
+        
+        <!-- Sales Rep Leaderboard -->
+        <div class="table-container">
+            <div class="table-header">
+                <h3>Sales Rep Leaderboard</h3>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Sales Rep</th>
+                            <th>Total Sales</th>
+                            <th>Deals Closed</th>
+                            <th>Avg Deal Size</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardTable">
+                        <tr>
+                            <td colspan="5" class="loading">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Detailed Sales Data Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <h3>Recent Sales Activities</h3>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Region</th>
+                            <th>Product</th>
+                            <th>Sales Rep</th>
+                            <th>Amount</th>
+                            <th>Stage</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salesTable">
+                        <tr>
+                            <td colspan="6" class="loading">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        class SalesDashboard {
+            constructor() {
+                this.data = {};
+                this.filters = {
+                    region: '',
+                    product: '',
+                    salesRep: '',
+                    stage: '',
+                    startDate: '',
+                    endDate: ''
+                };
+                this.init();
+            }
+            
+            async init() {
+                try {
+                    await this.loadFilterOptions();
+                    await this.loadDashboardData();
+                    this.createCharts();
+                    this.setupEventListeners();
+                } catch (error) {
+                    console.error('Error initializing dashboard:', error);
+                    this.showError('Failed to load dashboard data');
+                }
+            }
+            
+            async loadFilterOptions() {
+                try {
+                    const response = await fetch('/api/sales/filters');
+                    const result = await response.json();
+                    
+                    if (result.status === 'success') {
+                        this.populateFilters(result.data);
+                    }
+                } catch (error) {
+                    console.error('Error loading filter options:', error);
+                }
+            }
+            
+            populateFilters(data) {
+                const regionSelect = document.getElementById('regionFilter');
+                const productSelect = document.getElementById('productFilter');
+                const salesRepSelect = document.getElementById('salesRepFilter');
+                const stageSelect = document.getElementById('stageFilter');
+                
+                data.regions.forEach(region => {
+                    const option = document.createElement('option');
+                    option.value = region;
+                    option.textContent = region;
+                    regionSelect.appendChild(option);
+                });
+                
+                data.products.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product;
+                    option.textContent = product;
+                    productSelect.appendChild(option);
+                });
+                
+                data.salesReps.forEach(rep => {
+                    const option = document.createElement('option');
+                    option.value = rep;
+                    option.textContent = rep;
+                    salesRepSelect.appendChild(option);
+                });
+                
+                data.stages.forEach(stage => {
+                    const option = document.createElement('option');
+                    option.value = stage;
+                    option.textContent = stage;
+                    stageSelect.appendChild(option);
+                });
+            }
+            
+            async loadDashboardData() {
+                try {
+                    const [overview, regions, products, reps, funnel, trends] = await Promise.all([
+                        fetch('/api/sales/overview').then(r => r.json()),
+                        fetch('/api/sales/regions').then(r => r.json()),
+                        fetch('/api/sales/products').then(r => r.json()),
+                        fetch('/api/sales/reps').then(r => r.json()),
+                        fetch('/api/sales/funnel').then(r => r.json()),
+                        fetch('/api/sales/trends').then(r => r.json())
+                    ]);
+                    
+                    this.data = {
+                        overview: overview.data,
+                        regions: regions.data,
+                        products: products.data,
+                        reps: reps.data,
+                        funnel: funnel.data,
+                        trends: trends.data
+                    };
+                    
+                    this.updateOverviewCards();
+                    this.updateLeaderboard();
+                    await this.loadSalesData();
+                    
+                } catch (error) {
+                    console.error('Error loading dashboard data:', error);
+                    this.showError('Failed to load dashboard data');
+                }
+            }
+            
+            async loadSalesData() {
+                try {
+                    const queryParams = new URLSearchParams();
+                    Object.entries(this.filters).forEach(([key, value]) => {
+                        if (value) queryParams.append(key, value);
+                    });
+                    
+                    const response = await fetch(`/api/sales/data?${queryParams}`);
+                    const result = await response.json();
+                    
+                    if (result.status === 'success') {
+                        this.updateSalesTable(result.data);
+                    }
+                } catch (error) {
+                    console.error('Error loading sales data:', error);
+                }
+            }
+            
+            updateOverviewCards() {
+                const overview = this.data.overview;
+                
+                document.getElementById('currentMonthAmount').textContent = 
+                    this.formatCurrency(overview.totalSales.currentMonth.amount);
+                document.getElementById('currentQuarterAmount').textContent = 
+                    this.formatCurrency(overview.totalSales.currentQuarter.amount);
+                document.getElementById('ytdAmount').textContent = 
+                    this.formatCurrency(overview.totalSales.yearToDate.amount);
+                
+                document.getElementById('totalOpportunities').textContent = 
+                    overview.topMetrics.totalOpportunities.toLocaleString();
+                document.getElementById('avgDealSize').textContent = 
+                    this.formatCurrency(overview.topMetrics.averageDealSize);
+                document.getElementById('winRate').textContent = 
+                    overview.topMetrics.winRate + '%';
+            }
+            
+            updateLeaderboard() {
+                const tbody = document.getElementById('leaderboardTable');
+                tbody.innerHTML = '';
+                
+                this.data.reps.forEach((rep, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${rep.salesRep}</td>
+                        <td class="amount">${this.formatCurrency(rep.totalAmount)}</td>
+                        <td>${rep.count}</td>
+                        <td class="amount">${this.formatCurrency(rep.totalAmount / rep.count)}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+            
+            updateSalesTable(salesData) {
+                const tbody = document.getElementById('salesTable');
+                tbody.innerHTML = '';
+                
+                salesData.slice(0, 50).forEach(sale => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${new Date(sale.date).toLocaleDateString()}</td>
+                        <td>${sale.region}</td>
+                        <td>${sale.product}</td>
+                        <td>${sale.salesRep}</td>
+                        <td class="amount">${this.formatCurrency(sale.amount)}</td>
+                        <td><span class="status-badge status-${sale.stage.toLowerCase().replace(/\s+/g, '-')}">${sale.stage}</span></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+            
+            createCharts() {
+                this.createTrendsChart();
+                this.createRegionChart();
+                this.createProductChart();
+                this.createFunnelChart();
+            }
+            
+            createTrendsChart() {
+                const container = document.getElementById('trendsChart');
+                container.innerHTML = '';
+                
+                if (!this.data.trends || this.data.trends.length === 0) return;
+                
+                const maxAmount = Math.max(...this.data.trends.map(item => item.totalAmount));
+                
+                this.data.trends.forEach(item => {
+                    const bar = document.createElement('div');
+                    bar.className = 'trend-bar';
+                    const height = (item.totalAmount / maxAmount) * 100;
+                    bar.style.height = height + '%';
+                    
+                    const label = document.createElement('div');
+                    label.className = 'trend-label';
+                    const [year, month] = item.period.split('-');
+                    label.textContent = new Date(year, month - 1).toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+                    
+                    bar.appendChild(label);
+                    container.appendChild(bar);
+                });
+            }
+            
+            createRegionChart() {
+                const container = document.getElementById('regionChart');
+                container.innerHTML = '';
+                
+                if (!this.data.regions || this.data.regions.length === 0) return;
+                
+                const maxAmount = Math.max(...this.data.regions.map(item => item.totalAmount));
+                
+                this.data.regions.forEach(region => {
+                    const bar = document.createElement('div');
+                    bar.className = 'chart-bar';
+                    
+                    const label = document.createElement('div');
+                    label.className = 'bar-label';
+                    label.textContent = region.region;
+                    
+                    const visual = document.createElement('div');
+                    visual.className = 'bar-visual';
+                    const width = (region.totalAmount / maxAmount) * 100;
+                    visual.style.width = width + '%';
+                    
+                    const value = document.createElement('div');
+                    value.className = 'bar-value';
+                    value.textContent = this.formatCurrency(region.totalAmount);
+                    
+                    bar.appendChild(label);
+                    bar.appendChild(visual);
+                    bar.appendChild(value);
+                    container.appendChild(bar);
+                });
+            }
+            
+            createProductChart() {
+                const container = document.querySelector('#productChart .pie-legend');
+                container.innerHTML = '';
+                
+                if (!this.data.products || this.data.products.length === 0) return;
+                
+                const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe'];
+                
+                this.data.products.forEach((product, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'legend-item';
+                    
+                    const color = document.createElement('div');
+                    color.className = 'legend-color';
+                    color.style.backgroundColor = colors[index % colors.length];
+                    
+                    const text = document.createElement('div');
+                    text.className = 'legend-text';
+                    text.textContent = product.product;
+                    
+                    const value = document.createElement('div');
+                    value.className = 'legend-value';
+                    value.textContent = this.formatCurrency(product.totalAmount);
+                    
+                    item.appendChild(color);
+                    item.appendChild(text);
+                    item.appendChild(value);
+                    container.appendChild(item);
+                });
+            }
+            
+            createFunnelChart() {
+                const container = document.getElementById('funnelChart');
+                container.innerHTML = '';
+                
+                if (!this.data.funnel || this.data.funnel.length === 0) return;
+                
+                const maxCount = Math.max(...this.data.funnel.map(item => item.count));
+                
+                this.data.funnel.forEach(stage => {
+                    const bar = document.createElement('div');
+                    bar.className = 'chart-bar';
+                    
+                    const label = document.createElement('div');
+                    label.className = 'bar-label';
+                    label.textContent = stage.stage;
+                    
+                    const visual = document.createElement('div');
+                    visual.className = 'bar-visual';
+                    const width = (stage.count / maxCount) * 100;
+                    visual.style.width = width + '%';
+                    
+                    const value = document.createElement('div');
+                    value.className = 'bar-value';
+                    value.textContent = stage.count.toLocaleString();
+                    
+                    bar.appendChild(label);
+                    bar.appendChild(visual);
+                    bar.appendChild(value);
+                    container.appendChild(bar);
+                });
+            }
+            
+            setupEventListeners() {
+                const filterElements = [
+                    'regionFilter', 'productFilter', 'salesRepFilter', 
+                    'stageFilter', 'startDate', 'endDate'
+                ];
+                
+                filterElements.forEach(id => {
+                    document.getElementById(id).addEventListener('change', (e) => {
+                        const filterKey = id.replace('Filter', '').replace(/([A-Z])/g, '_$1').toLowerCase();
+                        this.filters[filterKey] = e.target.value;
+                        this.loadSalesData();
+                    });
+                });
+            }
+            
+            formatCurrency(amount) {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                }).format(amount);
+            }
+            
+            showError(message) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error';
+                errorDiv.textContent = message;
+                document.body.insertBefore(errorDiv, document.body.firstChild);
+                
+                setTimeout(() => {
+                    errorDiv.remove();
+                }, 5000);
+            }
+        }
+        
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new SalesDashboard();
+        });
+    </script>
+</body>
+</html>
