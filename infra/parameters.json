@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "East US"
+    },
+    "appServicePlanName": {
+      "value": "asp-new-app-demo"
+    },
+    "appServiceName": {
+      "value": "app-new-app-demo"
+    },
+    "sku": {
+      "value": {
+        "name": "B1",
+        "tier": "Basic", 
+        "size": "B1",
+        "family": "B",
+        "capacity": 1
+      }
+    },
+    "linuxFxVersion": {
+      "value": "NODE|20-lts"
+    }
+  }
+}
