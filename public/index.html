@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canada Day Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .maple-leaf {
+            color: #ff0000;
+            font-size: 2em;
+            margin: 0 10px;
+        }
+        h1 {
+            color: #d32f2f;
+            margin: 0;
+        }
+        .subtitle {
+            color: #666;
+            margin-top: 5px;
+        }
+        .input-section {
+            margin: 30px 0;
+            text-align: center;
+        }
+        .year-input {
+            padding: 12px 15px;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            width: 150px;
+            text-align: center;
+        }
+        .year-input:focus {
+            outline: none;
+            border-color: #d32f2f;
+        }
+        .calculate-btn {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 15px;
+        }
+        .calculate-btn:hover {
+            background-color: #b71c1c;
+        }
+        .calculate-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .result-section {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+        .result-day {
+            font-size: 2.5em;
+            color: #d32f2f;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        .result-date {
+            font-size: 1.3em;
+            color: #333;
+            margin: 10px 0;
+        }
+        .fun-fact {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+        }
+        .error-message {
+            color: #d32f2f;
+            background-color: #ffebee;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+        }
+        .info-section {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f1f8e9;
+            border-radius: 5px;
+            border-left: 4px solid #4caf50;
+        }
+        .api-info {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #fff3e0;
+            border-radius: 5px;
+            border-left: 4px solid #ff9800;
+        }
+        .api-info h3 {
+            margin-top: 0;
+            color: #e65100;
+        }
+        .code {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
+        .weekend-badge {
+            background-color: #4caf50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        .weekday-badge {
+            background-color: #2196f3;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><span class="maple-leaf">🍁</span>Canada Day Calculator<span class="maple-leaf">🍁</span></h1>
+            <p class="subtitle">Find out what day of the week Canada Day falls on for any year from 1600 to 3000</p>
+        </div>
+
+        <div class="input-section">
+            <input type="number" 
+                   id="yearInput" 
+                   class="year-input" 
+                   placeholder="Enter year" 
+                   min="1600" 
+                   max="3000">
+            <button id="calculateBtn" class="calculate-btn">Calculate</button>
+        </div>
+
+        <div id="errorMessage" class="error-message"></div>
+
+        <div id="resultSection" class="result-section">
+            <div id="resultDay" class="result-day"></div>
+            <div id="resultDate" class="result-date"></div>
+            <div id="weekendBadge"></div>
+            <div id="funFact" class="fun-fact"></div>
+        </div>
+
+        <div class="info-section">
+            <h3>About Canada Day</h3>
+            <p>Canada Day (French: Fête du Canada) is the national day of Canada. A federal statutory holiday, it celebrates the anniversary of Canadian Confederation which occurred on July 1, 1867, with the passing of the British North America Act, 1867.</p>
+            <p>This calculator uses <strong>JavaScript's Date object</strong>, which provides accurate day-of-week calculations for any year between 1600 and 3000.</p>
+        </div>
+
+        <div class="api-info">
+            <h3>API Endpoints</h3>
+            <p>Developers can also use our API to integrate Canada Day calculations into their applications:</p>
+            <div class="code">GET /api/canada-day/:year</div>
+            <div class="code">POST /api/canada-day (with {"year": 2024} in body)</div>
+            <p>Example: <a href="/api/canada-day/2024" target="_blank">/api/canada-day/2024</a></p>
+        </div>
+    </div>
+
+    <script>
+        const yearInput = document.getElementById('yearInput');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resultSection = document.getElementById('resultSection');
+        const errorMessage = document.getElementById('errorMessage');
+        const resultDay = document.getElementById('resultDay');
+        const resultDate = document.getElementById('resultDate');
+        const weekendBadge = document.getElementById('weekendBadge');
+        const funFact = document.getElementById('funFact');
+
+        function hideMessages() {
+            resultSection.style.display = 'none';
+            errorMessage.style.display = 'none';
+        }
+
+        function showError(message) {
+            hideMessages();
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        function showResult(data) {
+            hideMessages();
+            
+            resultDay.textContent = data.dayName;
+            resultDate.textContent = data.date;
+            
+            if (data.isWeekend) {
+                weekendBadge.innerHTML = '<span class="weekend-badge">Weekend</span>';
+            } else {
+                weekendBadge.innerHTML = '<span class="weekday-badge">Weekday</span>';
+            }
+            
+            funFact.textContent = data.funFact;
+            resultSection.style.display = 'block';
+        }
+
+        async function calculateCanadaDay() {
+            const year = yearInput.value.trim();
+            
+            if (!year) {
+                showError('Please enter a year');
+                return;
+            }
+
+            calculateBtn.disabled = true;
+            calculateBtn.textContent = 'Calculating...';
+
+            try {
+                const response = await fetch(`/api/canada-day/${year}`);
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    showResult(result.data);
+                } else {
+                    showError(result.message);
+                }
+            } catch (error) {
+                showError('An error occurred while calculating. Please try again.');
+                console.error('Error:', error);
+            } finally {
+                calculateBtn.disabled = false;
+                calculateBtn.textContent = 'Calculate';
+            }
+        }
+
+        calculateBtn.addEventListener('click', calculateCanadaDay);
+
+        yearInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateCanadaDay();
+            }
+        });
+
+        // Calculate for current year on page load
+        window.addEventListener('load', function() {
+            const currentYear = new Date().getFullYear();
+            yearInput.value = currentYear;
+            calculateCanadaDay();
+        });
+    </script>
+</body>
+</html>
